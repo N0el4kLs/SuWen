@@ -12,6 +12,7 @@ import (
     "html/template"
     "io/fs"
     "net/http"
+    "strings"
     "time"
 )
 
@@ -115,23 +116,29 @@ func Run(port string) {
         
         pathMap := make(map[string]int)
         addrMap := make(map[string]int)
-        
+        var pathSum, ipSum int
         for _, pc := range db.GetPathCounts() {
             k := pc.Path
             if k != "/index" && k != "/about" && k != "/pr" && k != "/gad" && k != "/poc" && k != "/rss" {
                 continue
             }
             pathMap[k] = pc.Count
+            pathSum += pc.Count
         }
         
         for _, ipc := range db.GetIPCounts() {
             if ipc.Address == "" {
                 ipc.Address = "未知"
             }
+            address := strings.Split(ipc.Address, " ")
+            if len(address) == 2 {
+                ipc.Address = address[0]
+            }
             if _, exists := addrMap[ipc.Address]; !exists {
                 addrMap[ipc.Address] = 1
             }
             addrMap[ipc.Address] += 1
+            ipSum += 1
         }
         
         PathLabels, PathSeries := util.Sort(pathMap)
@@ -154,6 +161,9 @@ func Run(port string) {
             "AddrLabels":    AddrLabels,
             "AddrSeries":    AddrSeries,
             "LastCheckTime": conf.LastCheckTime,
+            "pathSum":       pathSum,
+            "ipCountSum":    ipSum,
+            "ipSum":         len(addrMap),
         })
     })
     
