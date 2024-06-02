@@ -16,8 +16,9 @@ import (
 
 // VisitInfo 包含访问次数和IP地址的访问次数映射
 type VisitInfo struct {
-    Count int            // 总访问次数
-    IP    map[string]int // 每个IP的访问次数
+    Count     int // 总访问次数
+    LastCount int
+    IP        map[string]int // 每个IP的访问次数
 }
 
 // VisitCounter 访问计数器结构体
@@ -44,8 +45,8 @@ func (vc *VisitCounter) Increment(path string, clientIP string) {
             IP:    make(map[string]int),
         }
     }
-    
     vc.Counts[path].Count++
+    vc.Counts[path].LastCount = vc.Counts[path].Count - 1
     vc.Counts[path].IP[clientIP]++
 }
 
@@ -99,12 +100,21 @@ func (vc *VisitCounter) UpdateDatabase() {
         select {
         case <-ticker.C:
             for path, info := range vc.Counts {
-                db.AddOrUpdatePathCounts(path, db.PathCounts{
+                if info.LastCount == info.LastCount { // 说明这个 api 路径这个时间段就没有人访问，不用再去更新数据库了
+                    continue
+                }
+                vc.Counts[path].LastCount = vc.Counts[path].Count
+                count := db.AddOrUpdatePathCounts(path, &db.PathCounts{
                     Path:  path,
                     Count: info.Count,
                 })
+                if count != 0 {
+                    vc.mu.Lock()
+                    vc.Counts[path].Count = count
+                    vc.mu.Unlock()
+                }
                 
-                for ip, count := range info.IP {
+                for ip, ipCount := range info.IP {
                     address := ""
                     if ip != "" && qqwry.DB != nil {
                         _address, _ := qqwry.DB.Find(ip)
@@ -113,12 +123,16 @@ func (vc *VisitCounter) UpdateDatabase() {
                         }
                     }
                     
-                    db.AddOrUpdateIPCounts(path, ip, db.IPCounts{
+                    _count := db.AddOrUpdateIPCounts(path, ip, &db.IPCounts{
                         IP:      ip,
                         Path:    path,
-                        Count:   count,
+                        Count:   ipCount,
                         Address: address,
                     })
+                    
+                    vc.mu.Lock()
+                    vc.Counts[path].IP[ip] = _count
+                    vc.mu.Unlock()
                 }
             }
         }
