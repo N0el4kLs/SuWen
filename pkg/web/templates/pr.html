@@ -1,0 +1,144 @@
+{{template "header.html" .}}
+
+<div class="page-wrapper">
+  <!-- Page header -->
+  <div class="page-header d-print-none">
+    <div class="container-xl">
+      <div class="row g-2 align-items-center">
+        <div class="col">
+          <h2 class="page-title">
+            Security Press Releases
+          </h2>
+          <div class="text-secondary mt-1">About {{ .totalCount }} result ({{ .seconds }} seconds)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Page body -->
+  <div class="page-body">
+    <div class="container-xl">
+      <div class="row g-6">
+        <div class="col-2">
+          <form action="./pr" method="POST" autocomplete="off" novalidate>
+            <div class="subheader mb-2">Category</div>
+            <div class="list-group list-group-transparent mb-3">
+              {{ range $sourceName, $source_count := .sourceNames }}
+              {{ if eq $.ecosystem $sourceName }} <!-- .ecosystem 这个在 range 里, 所以应该使用 $.ecosystem -->
+              <a class="list-group-item list-group-item-action d-flex align-items-center active"
+                href="./pr?sourceName={{ $sourceName }}">
+                {{ $sourceName }}
+                <small class="text-secondary ms-auto">{{ $source_count }}</small>
+              </a>
+              {{ else }}
+              <a class="list-group-item list-group-item-action d-flex align-items-center"
+                href="./pr?sourceName={{ $sourceName }}">
+                {{ $sourceName }}
+                <small class="text-secondary ms-auto">{{ $source_count }}</small>
+              </a>
+              {{ end }}
+
+              {{ end }}
+            </div>
+            <div class="subheader mb-2">Severity</div>
+            <div class="mb-3">
+              {{ range $k, $v := .severity }}
+              <label class="form-check">
+                <input type="checkbox" class="form-check-input" name="form-severity" value="{{ $k }}">
+                <span class="form-check-label">{{ $k }} <small class="text-secondary ms-auto">{{ $v }}</small></span>
+              </label>
+              {{ end }}
+            </div>
+            <div class="subheader mb-2">Tags</div>
+            <div class="mb-3">
+              {{ range $tag, $tag_count := .tags }}
+              <label class="form-check">
+                <input type="checkbox" class="form-check-input" name="form-tags" value="{{ $tag }}">
+                <span class="form-check-label">{{ $tag }} <small class="text-secondary ms-auto">{{ $tag_count
+                    }}</small></span>
+              </label>
+              {{ end }}
+            </div>
+
+            <div class="mt-5">
+              <button class="btn btn-primary w-100">
+                Confirm changes
+              </button>
+              <a href="#" class="btn btn-link w-100">
+                Reset to defaults
+              </a>
+            </div>
+          </form>
+        </div>
+        <div class="col-10">
+          <div class="row row-cards">
+            {{ range $index, $message := .PressReleases }}
+            <div class="col-sm-6 col-lg-4">
+              <div class="card card-link card-link-pop">
+                <div class="card-status-top bg-{{ $message.Color }}"></div>
+                {{ if eq $message.Severity "严重" }}
+                <div class="ribbon bg-red ribbon-bookmark">
+                  {{ $message.Severity }}
+                </div>
+                {{ else }}
+                <div class="ribbon bg-orange ribbon-bookmark">
+                  {{ $message.Severity }}
+                </div>
+                {{ end }}
+
+                <div class="card-header">
+                  <h3 class="card-title">{{ $message.Title }}</h3>
+                </div>
+                <div class="card-body">
+                  {{ if $message.CVE }}
+                  <button class="btn btn-sm btn-info">{{ $message.CVE }}</button>
+                  {{ end }}
+                  {{ if $message.Tags }}
+                  {{ $myArray := splitString $message.Tags " ," }}
+                  {{ range $element := $myArray }}
+                  {{ if or (contains $element "poc") (contains $element "exp") }}
+                  <a href="#" class="btn btn-sm btn-danger">{{ $element }}</a>
+                  {{ else }}
+                  <a href="#" class="btn  btn-sm">{{ $element }}</a>
+                  {{ end }}
+                  {{ end }}
+                  {{ end }}
+                  <p></p>
+                  <div class="text-secondary">
+                    漏洞编号：{{ $message.UniqueKey }}
+                  </div>
+                  <div class="text-secondary">
+                    披露时间：{{ $message.Disclosure }}
+                  </div>
+                  <br>
+                  {{ if $message.Description }}
+                  <p>
+                    {{ nl2br $message.Description }}
+                  </p>
+                  {{ end }}
+                </div>
+
+                <ul class="list-group list-group-flush">
+                  {{ if $message.Solutions }} <li class="list-group-item"> {{ nl2br $message.Solutions }}</li> {{ end }}
+                </ul>
+                <div class="card-footer">
+                  <div class="text-secondary">
+                    更新时间: {{ $message.UpdatedAt }}
+                  </div>
+                  <a href="{{ $message.From }}" class="btn btn-sm status status-{{ $message.Color }}" target="_blank">{{
+                    $message.SourceName }}</a>
+                </div>
+              </div>
+            </div>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{template "footer.html" .}}
+</div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,153 @@
+{{template "header.html" .}}
+
+<div class="page-wrapper">
+  <!-- Page header -->
+  <div class="page-header d-print-none">
+    <div class="container-xl">
+      <div class="row g-2 align-items-center">
+        <div class="col">
+          <h2 class="page-title">
+            Poc Monitor
+          </h2>
+          <div class="text-secondary mt-1">About {{ .totalCount }} result ({{ .seconds }} seconds)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Page body -->
+  <div class="page-body">
+    <div class="container-xl">
+      <div class="row row-cards">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Poc</h3>
+            </div>
+            <div class="card-body border-bottom py-3">
+              <div class="d-flex">
+                <div class="text-secondary">
+                  Show
+                  <div class="mx-2 d-inline-block">
+                    <input type="text" class="form-control form-control-sm" value="{{ .pageSize }}" size="3"
+                      aria-label="Invoices count">
+                  </div>
+                  entries
+                </div>
+                <div class="ms-auto text-secondary">
+                  Search:
+                  <div class="ms-2 d-inline-block">
+                    <input type="text" class="form-control form-control-sm" aria-label="Search invoice">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table card-table table-vcenter text-nowrap datatable">
+                <thead>
+                  <tr>
+                    <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox"
+                        aria-label="Select all invoices"></th>
+                    <th class="w-1">No. <!-- Download SVG icon from http://tabler-icons.io/i/chevron-up -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm icon-thick" width="24" height="24"
+                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M6 15l6 -6l6 6" />
+                      </svg>
+                    </th>
+                    <th>PocName</th>
+                    <th>Description</th>
+                    <th>Severity</th>
+                    <th>Source</th>
+                    <th>CommitDate</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {{ range $index, $poc := .pocs }}
+                  <tr>
+                    <td><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select invoice">
+                    </td>
+                    <td><span class="text-secondary">{{ $index }}</span></td>
+                    <td><a href="{{ $poc.PocUrl }}" class="text-reset" tabindex="-1" target="_blank">{{ $poc.PocName }}</a></td>
+
+                    <td><span class="text-secondary">{{ $poc.Description }}</span></td>
+
+                    <td>
+                      {{ if eq $poc.Severity "Critical" }}
+                      <span class="badge bg-red text-red-fg">{{ $poc.Severity }}</span>
+                      {{ else }}
+                      <span class="badge bg-orange text-orange-fg">{{ $poc.Severity }}</span>
+                      {{ end }}
+                    </td>
+
+                    <td>
+                      {{ if eq $poc.Source "nuclei-templates" }}
+                      <span class="badge bg-azure text-azure-fg">{{ $poc.Source }}</span>
+                      {{ else }}
+                      <span class="badge bg-green text-green-fg">{{ $poc.Source }}</span>
+                      {{ end }}
+                    </td>
+
+                    <td><span class="text-secondary">{{ $poc.CommitDate }}</span></td>
+                  </tr>
+
+                  {{ end }}
+                </tbody>
+              </table>
+            </div>
+
+            {{if gt .paginator.PageNums 1}}
+            <div class="card-footer d-flex align-items-center">
+              <p class="m-0 text-secondary">Showing <span>1</span> to <span>{{ .pageSize }}</span> of <span>{{
+                  .totalCount }}</span> entries</p>
+
+              <ul class="pagination m-0 ms-auto">
+                <li class="page-item {{ if not .paginator.HasPrev }} disabled {{ end }}">
+                  <a class="page-link" {{ if .paginator.HasPrev }} href="{{.paginator.PageLinkPrev}}" {{ else }}
+                    href="#" aria-disabled="true" {{ end }} tabindex="-1">
+                    <!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                      stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M15 6l-6 6l6 6" />
+                    </svg>
+                    prev
+                  </a>
+                </li>
+
+                {{range $index, $page := .paginator.Pages}}
+                <li {{ if $.paginator.IsActive . }} class="page-item active" {{ else }} class="page-item" {{end}}>
+                  <a class="page-link" href="{{$.paginator.PageLink $page}}">{{$page}}</a>
+                </li>
+                {{end}}
+
+                <li class="page-item {{ if not .paginator.HasNext }} disabled {{ end }}">
+                  <a class="page-link" {{ if .paginator.HasNext }} href="{{.paginator.PageLinkNext}}" {{ else }}
+                    href="#" aria-disabled="true" {{ end }}>
+                    next <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                      stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M9 6l6 6l-6 6" />
+                    </svg>
+                  </a>
+                </li>
+              </ul>
+
+            </div>
+            {{ end }}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{template "footer.html" .}}
+</div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,340 @@
+{{template "header.html" .}}
+
+<div class="page-wrapper">
+    <!-- Page header -->
+    <div class="page-header d-print-none">
+        <div class="container-xl">
+            <div class="row g-2 align-items-center">
+                <div class="col">
+                    <!-- Page pre-title -->
+                    <div class="page-pretitle">
+                        Overview
+                    </div>
+                    <h2 class="page-title">
+                        Dashboard
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row row-cards">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <h3 class="card-title">厂商PR</h3>
+                            </div>
+                            <div id="chart-demo-pie"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <h3 class="card-title">Poc & CVE</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div id="chart-poc-cve"></div>
+                                </div>
+                                <div class="col-md-auto">
+                                    <div class="divide-y divide-y-fill">
+                                        <div class="px-4">
+                                            <div class="text-secondary">
+                                                <span class="status-dot bg-azure"></span> CVE
+                                            </div>
+                                            <div class="h2">{{ .cveTotal }}</div>
+                                        </div>
+                                        <div class="px-4">
+                                            <div class="text-secondary">
+                                                <span class="status-dot bg-green"></span> Poc
+                                            </div>
+                                            <div class="h2">{{ .pocTotal }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <h3 class="card-title">API访问统计</h3>
+                            </div>
+                            <div id="chart-path-pie"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <h3 class="card-title">地址访问统计</h3>
+                            </div>
+                            <div id="chart-address-pie"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header border-0">
+                            <div class="card-title">状态</div>
+                        </div>
+                        <div class="card-table table-responsive">
+                            <table class="table table-vcenter text-nowrap datatable">
+                                <thead>
+                                <tr>
+                                    <th>模块</th>
+                                    <th>上次请求时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {{ range $k, $v := .LastCheckTime }}
+                                <tr>
+                                    <td >{{ $k }}</td>
+                                    <td >{{ $v }}</td>
+                                </tr>
+                                {{ end }}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{template "footer.html" .}}
+</div>
+</div>
+
+<!-- Libs JS -->
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/libs/apexcharts/dist/apexcharts.min.js?1692870487"
+    defer></script>
+<script>
+    // @formatter:off
+    document.addEventListener("DOMContentLoaded", function () {
+        window.ApexCharts && (new ApexCharts(document.getElementById('chart-demo-pie'), {
+            chart: {
+                type: "donut",
+                fontFamily: 'inherit',
+                height: 360,
+                sparkline: {
+                    enabled: true
+                },
+                animations: {
+                    enabled: true
+                },
+            },
+            fill: {
+                opacity: 1,
+            },
+            series: {{ .PieSeries }},
+        labels: {{ .PieLabels }},
+        tooltip: {
+        theme: 'dark'
+    },
+        grid: {
+        strokeDashArray: 4,
+    },
+        colors: [tabler.getColor("primary"), tabler.getColor("primary", 0.8), tabler.getColor("azure", 0.6), tabler.getColor("gray-300")],
+        legend: {
+        show: true,
+        position: 'bottom',
+        offsetY: 12,
+        markers: {
+            width: 20,
+            height: 20,
+            radius: 200,
+        },
+        itemMargin: {
+            horizontal: 8,
+            vertical: 8
+        },
+    },
+        tooltip: {
+        fillSeriesColor: false
+    },
+        })).render();
+        });
+    // @formatter:on
+</script>
+<script>
+    // @formatter:off
+    document.addEventListener("DOMContentLoaded", function () {
+        window.ApexCharts && (new ApexCharts(document.getElementById('chart-poc-cve'), {
+            chart: {
+                type: "line",
+                fontFamily: 'inherit',
+                height: 323,
+                parentHeightOffset: 0,
+                toolbar: {
+                    show: true,
+                },
+                animations: {
+                    enabled: true
+                },
+            },
+            fill: {
+                opacity: 1,
+            },
+            stroke: {
+                width: 2,
+                lineCap: "round",
+                curve: "smooth",
+            },
+            series: [{
+                name: "CVE",
+                data: {{ .CveSeries }}
+                }, {
+        name: "Poc",
+        data: {{ .PocSeries }}
+                }],
+        tooltip: {
+        theme: 'dark'
+    },
+        grid: {
+        padding: {
+            top: -20,
+            right: 0,
+            left: -4,
+            bottom: -4
+        },
+        strokeDashArray: 4,
+    },
+        xaxis: {
+        labels: {
+            padding: 0,
+        },
+        tooltip: {
+            enabled: false
+        },
+        type: 'datetime',
+    },
+        yaxis: {
+        labels: {
+            padding: 4
+        },
+    },
+        labels: {{ .ChatLabels }},
+        colors: [tabler.getColor("azure"), tabler.getColor("green")],
+        legend: {
+        show: false,
+    },
+            })).render();
+        });
+    // @formatter:on
+</script>
+
+<script>
+    // @formatter:off
+    document.addEventListener("DOMContentLoaded", function () {
+        window.ApexCharts && (new ApexCharts(document.getElementById('chart-path-pie'), {
+            chart: {
+                type: "donut",
+                fontFamily: 'inherit',
+                height: 360,
+                sparkline: {
+                    enabled: true
+                },
+                animations: {
+                    enabled: true
+                },
+            },
+            fill: {
+                opacity: 1,
+            },
+            series: {{ .PathSeries }},
+        labels: {{ .PathLabels }},
+        tooltip: {
+            theme: 'dark'
+        },
+        grid: {
+            strokeDashArray: 4,
+        },
+        colors: [tabler.getColor("primary"), tabler.getColor("blue", 0.8), tabler.getColor("azure", 0.6), tabler.getColor("gray-300")],
+            legend: {
+            show: true,
+                position: 'bottom',
+                offsetY: 12,
+                markers: {
+                width: 20,
+                    height: 20,
+                    radius: 200,
+            },
+            itemMargin: {
+                horizontal: 8,
+                    vertical: 8
+            },
+        },
+        tooltip: {
+            fillSeriesColor: false
+        },
+    })).render();
+    });
+    // @formatter:on
+</script>
+
+<script>
+    // @formatter:off
+    document.addEventListener("DOMContentLoaded", function () {
+        window.ApexCharts && (new ApexCharts(document.getElementById('chart-address-pie'), {
+            chart: {
+                type: "donut",
+                fontFamily: 'inherit',
+                height: 360,
+                sparkline: {
+                    enabled: true
+                },
+                animations: {
+                    enabled: true
+                },
+            },
+            fill: {
+                opacity: 1,
+            },
+            series: {{ .AddrSeries }},
+        labels: {{ .AddrLabels }},
+        tooltip: {
+            theme: 'dark'
+        },
+        grid: {
+            strokeDashArray: 4,
+        },
+        colors: [tabler.getColor("primary"), tabler.getColor("blue", 0.8), tabler.getColor("azure", 0.6), tabler.getColor("gray-300")],
+            legend: {
+            show: true,
+                position: 'bottom',
+                offsetY: 12,
+                markers: {
+                width: 20,
+                    height: 20,
+                    radius: 200,
+            },
+            itemMargin: {
+                horizontal: 8,
+                    vertical: 8
+            },
+        },
+        tooltip: {
+            fillSeriesColor: false
+        },
+    })).render();
+    });
+    // @formatter:on
+</script>
+
+
+</body>
+
+</html>
