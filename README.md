@@ -5,7 +5,7 @@
     <img alt="Release" src="https://img.shields.io/github/license/yhy0/SuWen"/>
   </a>
   <a href="https://github.com/yhy0/SuWen">
-    <img alt="Release" src="https://img.shields.io/badge/release-v1.0.1-brightgreen"/>
+    <img alt="Release" src="https://img.shields.io/badge/release-v1.0.2-brightgreen"/>
   </a>
   <a href="https://github.com/yhy0/SuWen">
     <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/yhy0/SuWen?color=9cf"/>
