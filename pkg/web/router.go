@@ -91,7 +91,6 @@ func Run(port string) {
         pocDate := db.GetPocDate()
         for _, date := range pocDate {
             _date := date.CommitDate.Format("2006-01-02")
-            _date = "2024-05-27"
             if len(dateMap[_date]) != 0 && dateMap[_date][1] != 0 {
                 dateMap[_date][1] += 1
             } else if len(dateMap[_date]) == 0 { // 这种情况表明 cve 这天没有数据
@@ -120,10 +119,12 @@ func Run(port string) {
         for _, pc := range db.GetPathCounts() {
             k := pc.Path
             if k != "/index" && k != "/about" && k != "/pr" && k != "/gad" && k != "/poc" && k != "/rss" {
-                continue
+                pathMap["other"] = pathMap["other"] + pc.Count
+                pathSum = pathSum + pc.Count
+            } else {
+                pathMap[k] = pc.Count
+                pathSum += pc.Count
             }
-            pathMap[k] = pc.Count
-            pathSum += pc.Count
         }
         
         for _, ipc := range db.GetIPCounts() {

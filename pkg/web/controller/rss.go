@@ -4,7 +4,7 @@ import (
     "fmt"
     "github.com/gorilla/feeds"
     "github.com/yhy0/SuWen/pkg/db"
-    "time"
+    "sort"
 )
 
 /**
@@ -14,18 +14,18 @@ import (
 **/
 
 func GenerateRSS() (string, error) {
-    now := time.Now()
     feed := &feeds.Feed{
         Title:       "素问",
         Link:        &feeds.Link{Href: "https://su.fireline.fun/"},
         Description: "漏洞信息推送",
         Author:      &feeds.Author{Name: "yhy", Email: "yhysec@qq.com"},
-        Created:     now,
     }
+    
+    var items []*feeds.Item
     
     _, pocs := db.GetPocInfo(0, 0)
     for _, poc := range pocs {
-        feed.Items = append(feed.Items, &feeds.Item{
+        items = append(items, &feeds.Item{
             Title:       fmt.Sprintf("%s 又有新 POC 了", poc.Source),
             Link:        &feeds.Link{Href: "https://su.fireline.fun/poc"},
             Description: poc.Description,
@@ -35,7 +35,7 @@ func GenerateRSS() (string, error) {
     
     _, prs := db.GetPressRelease(nil)
     for _, pr := range prs {
-        feed.Items = append(feed.Items, &feeds.Item{
+        items = append(items, &feeds.Item{
             Title:       fmt.Sprintf("[%s] %s", pr.Source, pr.Title),
             Link:        &feeds.Link{Href: "https://su.fireline.fun/pr"},
             Description: pr.Description,
@@ -45,13 +45,20 @@ func GenerateRSS() (string, error) {
     
     _, advisories := db.GetAdvisoryInfo("")
     for _, advisory := range advisories {
-        feed.Items = append(feed.Items, &feeds.Item{
-            Title:       "又有新 CVE 了",
+        items = append(items, &feeds.Item{
+            Title:       fmt.Sprintf("又有新 CVE 了 [%s]", advisory.CVE),
             Link:        &feeds.Link{Href: "https://su.fireline.fun/gad"},
             Description: advisory.Description,
             Created:     advisory.CreatedAt,
         })
     }
     
+    // 按Created字段排序，最新的时间在前
+    sort.Slice(items, func(i, j int) bool {
+        return items[i].Created.After(items[j].Created)
+    })
+    
+    feed.Items = items
+    feed.Created = items[0].Created
     return feed.ToRss()
 }

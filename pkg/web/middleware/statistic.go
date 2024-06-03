@@ -100,10 +100,12 @@ func (vc *VisitCounter) UpdateDatabase() {
         select {
         case <-ticker.C:
             for path, info := range vc.Counts {
-                if info.LastCount == info.LastCount { // 说明这个 api 路径这个时间段就没有人访问，不用再去更新数据库了
+                if info.Count == info.LastCount { // 说明这个 api 路径这个时间段就没有人访问，不用再去更新数据库了
                     continue
                 }
+                vc.mu.Lock()
                 vc.Counts[path].LastCount = vc.Counts[path].Count
+                vc.mu.Unlock()
                 count := db.AddOrUpdatePathCounts(path, &db.PathCounts{
                     Path:  path,
                     Count: info.Count,
