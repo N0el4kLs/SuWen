@@ -28,7 +28,7 @@ func ChatGPT(msg string) string {
             Messages: []openai.ChatCompletionMessage{
                 {
                     Role:    openai.ChatMessageRoleUser,
-                    Content: fmt.Sprintf("请帮我把以下内容翻译成中文，同时对输出的 markdown 语法和链接信息 前后空一格显示，并且只返回你处理后的内容,不要增加任何无关输出\n %s", msg),
+                    Content: fmt.Sprintf("请帮我把以下内容翻译成中文，同时对输出的 markdown 语法和链接信息 前后空一格显示，并且只返回你处理后的内容，不要增加任何无关输出\n %s", msg),
                 },
             },
         },

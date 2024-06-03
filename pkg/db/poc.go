@@ -29,8 +29,13 @@ func AddPoc(data *Poc) int {
     return data.Id
 }
 
-func GetPocInfo(pageNum int, pageSize int) (count int64, poc []*Poc) {
+func GetPocInfo(pageNum int, pageSize int, pocName string) (count int64, poc []*Poc) {
     globalDBTmp := GlobalDB.Model(&Poc{})
+    
+    if pocName != "" {
+        globalDBTmp.Where("poc_name = ?", pocName)
+    }
+    
     globalDBTmp.Count(&count)
     
     if pageNum == 0 && pageSize == 0 {

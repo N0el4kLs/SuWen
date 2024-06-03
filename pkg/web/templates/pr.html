@@ -115,6 +115,15 @@
                     {{ nl2br $message.Description }}
                   </p>
                   {{ end }}
+
+                  {{ if $message.GithubSearch }}
+                  Github 公开信息:
+                  {{ $github := splitString $message.GithubSearch " ," }}
+                  {{ range $url := $github }}
+                  <a href="{{ $url }}" target="_blank">{{ $url }}</a>
+                  {{ end }}
+                  {{ end }}
+
                 </div>
 
                 <ul class="list-group list-group-flush">

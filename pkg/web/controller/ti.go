@@ -18,6 +18,7 @@ import (
 func GetPressRelease(c *gin.Context) {
     startTime := time.Now()
     formSourceName := c.Query("sourceName")
+    key := c.Query("key")
     formTags := c.PostFormArray("form-tags")
     formSeverity := c.PostFormArray("form-severity")
     
@@ -28,6 +29,11 @@ func GetPressRelease(c *gin.Context) {
         }
         search["source_name"] = []string{formSourceName}
     }
+    
+    if key != "" {
+        search["key"] = []string{key}
+    }
+    
     if len(formTags) > 0 {
         search["tags"] = formTags
     }
@@ -98,7 +104,9 @@ func GetGitHubAdvisoryDatabase(c *gin.Context) {
         ecosystem = ""
     }
     
-    totalCount, advisories := db.GetAdvisoryInfo(ecosystem)
+    key := c.Query("key")
+    
+    totalCount, advisories := db.GetAdvisoryInfo(ecosystem, key)
     ecosystems := make(map[string]int)
     _advisories := db.GetEcosystem()
     for _, advisory := range _advisories {

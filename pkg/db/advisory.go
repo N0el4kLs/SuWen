@@ -32,10 +32,14 @@ func AddAdvisory(data *Advisory) int {
     return data.Id
 }
 
-func GetAdvisoryInfo(ecosystem string) (count int64, advisories []*Advisory) {
+func GetAdvisoryInfo(ecosystem, key string) (count int64, advisories []*Advisory) {
     globalDBTmp := GlobalDB.Model(&Advisory{})
     if ecosystem != "" {
-        globalDBTmp = globalDBTmp.Or("ecosystem = ?", ecosystem)
+        globalDBTmp = globalDBTmp.Where("ecosystem = ?", ecosystem)
+    }
+    
+    if key != "" {
+        globalDBTmp = globalDBTmp.Where("ghsa_id = ?", key)
     }
     
     globalDBTmp.Count(&count).Order("published_at desc").Find(&advisories)

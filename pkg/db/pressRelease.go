@@ -119,6 +119,10 @@ func searchPressRelease(query map[string][]string) *gorm.DB {
         }
     }
     
+    if query["key"] != nil {
+        globalDBTmp = globalDBTmp.Where("unique_key = ?", query["key"][0])
+    }
+    
     if query["severity"] != nil {
         for i, severity := range query["severity"] {
             if i > 0 {

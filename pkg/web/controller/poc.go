@@ -32,7 +32,9 @@ func GetPoc(c *gin.Context) {
         pageNum = (page - 1) * pageSize
     }
     
-    totalCount, pocs := db.GetPocInfo(pageNum, pageSize)
+    pocName := c.Query("pocName")
+    
+    totalCount, pocs := db.GetPocInfo(pageNum, pageSize, pocName)
     
     endTime := time.Now()
     
