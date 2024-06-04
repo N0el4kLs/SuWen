@@ -39,9 +39,9 @@ func GetPocInfo(pageNum int, pageSize int, pocName string) (count int64, poc []*
     globalDBTmp.Count(&count)
     
     if pageNum == 0 && pageSize == 0 {
-        globalDBTmp.Order("updated_at desc").Find(&poc)
+        globalDBTmp.Order("commit_date desc").Find(&poc)
     } else {
-        globalDBTmp.Offset(pageNum).Limit(pageSize).Order("updated_at desc").Find(&poc)
+        globalDBTmp.Offset(pageNum).Limit(pageSize).Order("commit_date desc").Find(&poc)
     }
     
     return

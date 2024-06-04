@@ -20,6 +20,9 @@ func Run() {
     FindAfrog()
     conf.LastCheckTime["Afrog"] = util.TimeNow()
     
+    FindGoby()
+    conf.LastCheckTime["Goby"] = util.TimeNow()
+    
     interval, err := time.ParseDuration(conf.GlobalConfig.WatchVulnAppConfig.Interval)
     if err != nil {
         logging.Logger.Errorln(err)
@@ -42,6 +45,9 @@ func Run() {
             
             FindAfrog()
             conf.LastCheckTime["Afrog"] = util.TimeNow()
+            
+            FindGoby()
+            conf.LastCheckTime["Goby"] = util.TimeNow()
             
             // hour := time.Now().In(loc).Hour()
             // if hour >= 0 && hour < 7 {

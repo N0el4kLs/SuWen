@@ -80,3 +80,12 @@ func Sort(data map[string]int) ([]string, []int) {
     
     return labels, series
 }
+
+// TruncateString 截取字符
+func TruncateString(str string) string {
+    runes := []rune(str)
+    if len(runes) > 30 {
+        return string(runes[:30]) + " ..."
+    }
+    return str
+}

@@ -35,6 +35,9 @@ func GenerateRSS() (string, error) {
     
     _, prs := db.GetPressRelease(nil)
     for _, pr := range prs {
+        if pr.CVE != "" && pr.Pushed { // 同一个 cve 只推送一次
+            continue
+        }
         items = append(items, &feeds.Item{
             Title:       fmt.Sprintf("[%s] %s", pr.Source, pr.Title),
             Link:        &feeds.Link{Href: fmt.Sprintf("https://su.fireline.fun/pr?key=%s", pr.UniqueKey)},

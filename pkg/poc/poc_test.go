@@ -1,7 +1,6 @@
 package poc
 
 import (
-    "context"
     "github.com/yhy0/SuWen/pkg/conf"
     "github.com/yhy0/SuWen/pkg/db"
     "github.com/yhy0/SuWen/pkg/notice"
@@ -20,7 +19,7 @@ func Test_Nuclei(t *testing.T) {
     conf.Init()
     db.Init()
     notice.InitPusher()
-    FindNucleiPR(context.Background())
+    FindNucleiPR()
     
 }
 
@@ -28,6 +27,14 @@ func Test_Afrog(t *testing.T) {
     logging.Logger = logging.New(true, "", "SuWen", true)
     conf.Init()
     db.Init()
-    FindAfrog(context.Background())
+    FindAfrog()
+    
+}
+
+func Test_Goby(t *testing.T) {
+    logging.Logger = logging.New(true, "", "SuWen", true)
+    conf.Init()
+    // db.Init()
+    FindGoby()
     
 }

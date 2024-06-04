@@ -70,9 +70,9 @@
                     <td><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select invoice">
                     </td>
                     <td><span class="text-secondary">{{ $index }}</span></td>
-                    <td><a href="{{ $poc.PocUrl }}" class="text-reset" tabindex="-1" target="_blank">{{ $poc.PocName }}</a></td>
+                    <td><a href="{{ $poc.PocUrl }}" class="text-reset" tabindex="-1" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $poc.PocName }}">{{ TruncateString $poc.PocName }}</a></td>
 
-                    <td><span class="text-secondary">{{ $poc.Description }}</span></td>
+                    <td><span class="text-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $poc.Description }}">{{ TruncateString $poc.Description }}</span></td>
 
                     <td>
                       {{ if eq $poc.Severity "Critical" }}
@@ -85,8 +85,10 @@
                     <td>
                       {{ if eq $poc.Source "nuclei-templates" }}
                       <span class="badge bg-azure text-azure-fg">{{ $poc.Source }}</span>
-                      {{ else }}
+                      {{ else if eq $poc.Source "afrog" }}
                       <span class="badge bg-green text-green-fg">{{ $poc.Source }}</span>
+                      {{ else }}
+                      <span class="badge bg-blue text-blue-fg">{{ $poc.Source }}</span>
                       {{ end }}
                     </td>
 

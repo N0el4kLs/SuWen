@@ -5,7 +5,7 @@
     <img alt="Release" src="https://img.shields.io/github/license/yhy0/SuWen"/>
   </a>
   <a href="https://github.com/yhy0/SuWen">
-    <img alt="Release" src="https://img.shields.io/badge/release-v1.0.2-brightgreen"/>
+    <img alt="Release" src="https://img.shields.io/badge/release-v1.0.3-brightgreen"/>
   </a>
   <a href="https://github.com/yhy0/SuWen">
     <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/yhy0/SuWen?color=9cf"/>
@@ -28,7 +28,7 @@
 
 - 展示一些厂商漏洞 PR ，通过集成[watchvuln](https://github.com/zema1/watchvuln) 实现
 - 拉取 [GitHub Advisory Database](https://github.com/advisories) 中漏洞等级为 `high` 和 `critical` 的 CVE
-- 监控 [nuclei-templates](https://github.com/projectdiscovery/nuclei-templates/) 和 [afrog](https://github.com/zan8in/afrog) 新增的 POC 
+- 监控 [nuclei-templates](https://github.com/projectdiscovery/nuclei-templates/) 、 [afrog](https://github.com/zan8in/afrog) 和 [goby](https://gobysec.net/updates) 新增的 POC 
 
 ## 致谢
 

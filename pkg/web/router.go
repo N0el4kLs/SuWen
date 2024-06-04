@@ -37,12 +37,13 @@ func Run(port string) {
     
     // 向模板引擎添加自定义函数
     tmpl.Funcs(template.FuncMap{
-        "nl2br":         util.Nl2br,
-        "splitString":   util.SplitString,
-        "contains":      util.Contains,
-        "pointer":       util.Pointer,
-        "TimeSub":       util.TimeSub,
-        "ParseMarkdown": util.ParseMarkdown,
+        "nl2br":          util.Nl2br,
+        "splitString":    util.SplitString,
+        "contains":       util.Contains,
+        "pointer":        util.Pointer,
+        "TimeSub":        util.TimeSub,
+        "ParseMarkdown":  util.ParseMarkdown,
+        "TruncateString": util.TruncateString,
     })
     
     router.Static("/db/results/", "./db/results/")

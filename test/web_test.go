@@ -3,6 +3,7 @@ package test
 import (
     "github.com/yhy0/SuWen/pkg/conf"
     "github.com/yhy0/SuWen/pkg/db"
+    "github.com/yhy0/SuWen/pkg/poc"
     "github.com/yhy0/SuWen/pkg/qqwry"
     "github.com/yhy0/SuWen/pkg/web"
     "github.com/yhy0/logging"
@@ -20,7 +21,7 @@ func TestWeb(t *testing.T) {
     conf.Init()
     db.Init()
     qqwry.Init()
-    // go TI.RunGithubAdvisories()
+    go poc.FindGoby()
     web.Run("9088")
     
 }

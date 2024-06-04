@@ -87,11 +87,24 @@ func IsTodayBeijing(t time.Time) (bool, time.Time) {
     t = t.In(loc)
     now := time.Now().In(loc)
     
-    hours := int(now.Sub(t).Hours()) // 计算两个时间的小时差，只要小时差小于 24 , 这两天更新的
+    hours := int(now.Sub(t).Hours()) // 计算两个时间的小时差，只要小时差小于等于 24
     
-    return t.Year() == now.Year() && t.Month() == now.Month() && (t.Day() == now.Day() || hours <= 24), t
+    return hours <= 24, t
 }
 
+func IsToday(dateStr string) (bool, time.Time) {
+    t, err := time.Parse("2006-01-02T15:04:05.000000Z", dateStr)
+    loc, _ := time.LoadLocation("Asia/Shanghai")
+    now := time.Now().In(loc)
+    if err != nil {
+        return true, now
+    }
+    
+    hours := int(now.Sub(t).Hours()) // 计算两个时间的小时差，只要小时差小于 24 , 这两天更新的
+    return hours <= 24, t
+}
+
+// SortTimeSlice 按照时间排序
 func SortTimeSlice(dateStrings []string) []string {
     // 解析日期字符串并将它们存储在一个新的 time.Time 切片中
     var dates []time.Time
