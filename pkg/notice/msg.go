@@ -50,7 +50,7 @@ const cveMsg = `
 
 - CVE编号: {{ .CVE }}
 - 描述: {{ .Summary }}
-- 漏洞登记: {{ .Severity }} 评分：{{ .Score }}
+- 漏洞等级: {{ .Severity }} 评分：{{ .Score }}
 - 语言: {{ .Ecosystem }}
 - 地址: [{{ .GithubUrl }}]({{ .GithubUrl }})
 `

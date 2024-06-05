@@ -116,7 +116,8 @@ func Run(port string) {
         
         pathMap := make(map[string]int)
         addrMap := make(map[string]int)
-        var pathSum, ipSum int
+        ipMap := make(map[string]int)
+        var pathSum int
         for _, pc := range db.GetPathCounts() {
             k := pc.Path
             if k != "/index" && k != "/about" && k != "/pr" && k != "/gad" && k != "/poc" && k != "/rss" {
@@ -140,7 +141,10 @@ func Run(port string) {
                 addrMap[ipc.Address] = 1
             }
             addrMap[ipc.Address] += 1
-            ipSum += 1
+            if _, exists := ipMap[ipc.Address]; !exists {
+                ipMap[ipc.IP] = 1
+            }
+            ipMap[ipc.IP] += 1
         }
         
         PathLabels, PathSeries := util.Sort(pathMap)
@@ -164,8 +168,8 @@ func Run(port string) {
             "AddrSeries":    AddrSeries,
             "LastCheckTime": conf.LastCheckTime,
             "pathSum":       pathSum,
-            "ipCountSum":    ipSum,
-            "ipSum":         len(addrMap),
+            "ipCountSum":    len(ipMap),
+            "ipAddrSum":     len(addrMap),
         })
     })
     
